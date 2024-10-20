@@ -13,12 +13,11 @@ class Task(models.Model):
         ('completed', 'Completed'),
     ]
 
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=255)
     description = models.TextField()
     due_date = models.DateField()
-    priority = models.CharField(max_length=6, choices=PRIORITY_CHOICES)
-    status = models.CharField(max_length=9, choices=STATUS_CHOICES, default='pending')
-    completed_at = models.DateTimeField(null=True, blank=True)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
