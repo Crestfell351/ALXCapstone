@@ -18,6 +18,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from rest_framework.routers import DefaultRouter
+from tasks.views import TaskViewSet, UserViewSet
+
+router = DefaultRouter()
+router.register(r'tasks', TaskViewSet)
+router.register(r'users', UserViewSet)
 
 def home(request):
     return HttpResponse("Welcome to the Task Management API")
