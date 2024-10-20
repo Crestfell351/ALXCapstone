@@ -6,6 +6,11 @@ from django.db import models
 from django.conf import settings
 from .models import Task
 from .views import TaskCompleteView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .serializers import TaskSerializer
+from django.utils import timezone
 
 class Task(models.Model):
     title = models.CharField(max_length=200)
@@ -22,6 +27,22 @@ class Task(models.Model):
     )
     completed_at = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+class TaskCompleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk, format=None):
+        try:
+            task = Task.objects.get(pk=pk, user=request.user)
+        except Task.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        task.status = "Completed"
+        task.completed_at = timezone.now()
+        task.save()
+
+        serializer = TaskSerializer(task)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class TaskManagementAPITests(APITestCase):
     def setUp(self):
@@ -129,6 +150,9 @@ class TaskManagementAPITests(APITestCase):
         response = self.client.get(f"{self.tasks_url}?priority=High")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+from django.urls import path
+from .views import TaskCompleteView
 
 urlpatterns = [
     path('tasks/<int:pk>/complete/', TaskCompleteView.as_view(), name='task-complete'),
