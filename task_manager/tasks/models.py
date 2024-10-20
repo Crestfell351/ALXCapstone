@@ -17,11 +17,11 @@ class Task(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     due_date = models.DateField()
-    priority = models.CharField(max_length=6, choices=PRIORITY_CHOICES)
+    priority = models.CharField(max_length=50)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     completed_at = models.DateTimeField(null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
+        
     def save(self, *args, **kwargs):
         if self.status == 'completed' and not self.completed_at:
             self.completed_at = timezone.now()

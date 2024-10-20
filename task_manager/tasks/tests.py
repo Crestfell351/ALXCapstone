@@ -3,6 +3,8 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.contrib.auth.models import User
 from .models import Task
+from django.db import models
+
 
 
 class TaskManagementAPITests(APITestCase):
@@ -58,7 +60,8 @@ class TaskManagementAPITests(APITestCase):
         response = self.client.get(task_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["title"], "Task Detail")
-    
+    from django.db import models
+
     def test_update_task(self):
         """
         Test updating a task
